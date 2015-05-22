@@ -53,3 +53,4 @@ logstash 从什么位置开始读取文件数据，默认是结束位置，也�
 3. *LogStash::Inputs::File* 只是在进程运行的注册阶段初始化一个 *FileWatch* 对象。所以它不能支持类似 fluentd 那样的 `path => "/path/to/%{+yyyy/MM/dd/hh}.log"` 写法。达到相同目的，你只能写成 `path => "/path/to/*/*/*/*.log"`。
 4. `start_position` 仅在该文件从未被监听过的时候起作用。如果 sincedb 文件中已经有这个文件的 inode 记录了，那么 logstash 依然会从记录过的 pos 开始读取数据。所以重复测试的时候每回需要删除 sincedb 文件。
 5. 因为 windows 平台上没有 inode 的概念，Logstash 某些版本在 windows 平台上监听文件不是很靠谱。windows 平台上，推荐考虑使用 nxlog 作为收集端，参阅本书[稍后](../ecosystem/nxlog.md)章节。
+6. Linux环境，如果你只是不想sincedb文件，保存在默认的$HOME目录(`$HOME/sincedb_*`)，仅仅想替换为你指定的目录（`$you_need_dir/sincedb_*`)且生成规则不变，只需要设置环境变量$SINCEDB_DIR=you_need_dir（不用配置sincedb_path）。 因为*LogStash::Inputs::File*中，未设置sincedb_path， 默认规则sincedb_dir = ENV["SINCEDB_DIR"] || ENV["HOME"]
